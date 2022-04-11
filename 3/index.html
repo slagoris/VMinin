@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="ru">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Основы Vue</title>
+    <link rel="stylesheet" href="theme.css" />
+    <style>
+      [v-cloak] { display: none}
+    </style>
+  </head>
+  <body>
+    <div class="container" id="app" v-cloak>
+        <div class="card center">
+          <div v-html="myHtml"></div>
+<!--          <h2 v-text="title"></h2>-->
+<!--          <h2 v-once>{{ title }}</h2>-->
+<!--          <h2 v-pre>{{ title }}</h2>-->
+<!--          <button class="btn" @click="title = 'fsdfsdf'">Кнопка</button>-->
+          <div class="form-control">
+            <input type="text" @keyup.enter="addItem" ref="myInput"/>
+          </div>
+          <ul class="list" v-if="items.length">
+            <li class="list-item"
+                v-for="(item, index) in items"
+                @click="items.splice(index, 1)"
+                :key="item"
+            >
+              <strong>{{ item }}</strong>
+              &nbsp;<input type="text" @click.stop/>
+            </li>
+<!--            <li class="lisy-item" v-for="(value, key) in person">-->
+<!--               <strong>{{ key }}: </strong> {{ value }}-->
+<!--            </li>-->
+          </ul>
+          <h3 v-show="items.length === 0">Нет элементов</h3>
+        </div>
+    </div>
+    <script src="https://unpkg.com/vue@3"></script>
+    <script src="app.js"></script>
+  </body>
+</html>

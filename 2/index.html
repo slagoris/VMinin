@@ -9,7 +9,10 @@
   <body>
     <div class="container" id="app">
       <div class="card ">
-        <h1>{{ title }}</h1>
+        <h1 :style="{
+          color: inputValue.length < 5 ? 'red' : 'darkblue',
+          fontSize: inputValue.length < 6 ? '2rem' : '1rem'
+        }" :class="">{{ title }}</h1>
         <div class="form-control">
           <input type="text"
                  :placeholder="placeholderString"
@@ -21,7 +24,7 @@
         <hr/>
         <ul class="list" v-if="notes.length">
           <li class="list-item" v-for="(note, index) in notes" :key="index">
-            <span>{{ index + 1 }}. {{ toUpperCase(note) }}</span>
+            <span :class="note.length > 5 ? 'primary' : 'bold'">{{ index + 1 }}. {{ toUpperCase(note) }}</span>
             <button class="btn danger" @click="removeNote(index)">Удалить</button>
           </li>
           <hr>
