@@ -16,7 +16,11 @@
             </app-button>
         </form>
         <div class="card card-w70">
-            <app-block :items="blocks"/>
+            <app-block
+                :item="item" v-for="(item, idx) in blocks"
+                @del="delBlock(idx)"
+            />
+
             <h3 v-if="blocks.length === 0">
                 Добавьте первый блок, чтобы увидеть результат
             </h3>
@@ -84,6 +88,9 @@ export default {
             this.blocks.push(obj)
             this.textAreaValue = ''
             this.blockType = 'title'
+        },
+        delBlock (idx) {
+            this.blocks.splice(idx, 1)
         },
         loadComments () {
             this.loading = true
