@@ -1,29 +1,20 @@
 <template>
-  <div class="container">
-    <div class="card">
-      <h1>Vue Composition Api</h1>
-      <hr>
-      <p>Название: <strong>{{ name }}</strong></p>
-      <p>Версия: <strong>{{ version }}</strong></p>
+  <header class="navbar">
+    <strong>Vue Composition Api</strong>
 
-      <button class="btn" @click="changeInfo">Изменить</button>
-    </div>
+    <ul class="navbar-menu">
+      <li>
+        <router-link to="/">Главная</router-link>
+      </li>
+      <li>
+        <router-link to="/reusable">Переиспользование</router-link>
+      </li>
+      <li>
+        <router-link to="/vuex">Vuex</router-link>
+      </li>
+    </ul>
+  </header>
+  <div class="container with-nav">
+    <router-view></router-view>
   </div>
 </template>
-
-<script>
-export default {
-  data() {
-    return {
-      name: 'VueJS',
-      version: 3
-    }
-  },
-  methods: {
-    changeInfo() {
-      this.name = 'Vue JS!'
-      this.version = 4
-    }
-  }
-}
-</script>
