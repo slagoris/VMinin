@@ -167,7 +167,8 @@ h3 {
     color: #e53935;
 }
 
-.form-control.invalid input {
+.form-control.invalid input,
+.form-control.invalid textarea{
     border-color: #e53935;
 }
 

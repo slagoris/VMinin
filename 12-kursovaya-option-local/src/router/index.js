@@ -17,7 +17,7 @@ const router = createRouter({
       component: New
     },
     {
-      path: '/task',
+      path: '/task/:taskId',
       name: 'task',
       component: Task
     },

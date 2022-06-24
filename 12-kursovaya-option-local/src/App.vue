@@ -7,11 +7,20 @@
 
 <script>
 import TheNavbar from './components/TheNavbar'
-
+import {mapState, mapMutations} from 'vuex'
 export default {
   components: {
     TheNavbar
-  }
+  },
+	mounted() {
+		this.getTasks()
+	},
+	methods: {
+		...mapMutations(['getTasks'])
+	},
+	computed: {
+		...mapState(['tasks'])
+	},
 }
 </script>
 
