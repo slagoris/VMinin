@@ -4,7 +4,8 @@ import axios from "axios";
 export default createStore({
 	state() {
 		return {
-			tasks: []
+			tasks: [],
+			loading: false,
 		}
 	},
 	getters: {},
@@ -14,16 +15,20 @@ export default createStore({
 		}
 	},
 	actions: {
-		async loadTasks(context) {
-			const { data } = await axios.get('https://mini-freelance-default-rtdb.europe-west1.firebasedatabase.app/tasks.json',)
-			if (data) {
-				context.state.tasks = Object.keys(data).map(key => {
-					return {
-						id: key,
-						...data[key]
-					}
-				})
-			}
+		loadTasks(context) {
+			context.state.loading = true
+			setTimeout( async () => {
+				const { data } = await axios.get('https://mini-freelance-default-rtdb.europe-west1.firebasedatabase.app/tasks.json',)
+				if (data) {
+					context.state.tasks = Object.keys(data).map(key => {
+						return {
+							id: key,
+							...data[key]
+						}
+					})
+				}
+				context.state.loading = false
+			}, 300)
 		}
 	},
 	modules: {}

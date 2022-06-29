@@ -8,23 +8,23 @@
       <button
 					:disabled="currentTask.status !== 'active'"
 					class="btn"
-					@click="changeStatus($route.params.taskId, currentTask, 'pending')"
+					@click="changeStatus(currentTask.id, currentTask, 'pending')"
 			>
 				Взять в работу
 			</button>
       <button
 					:disabled="currentTask.status !== 'pending'"
 					class="btn primary"
-					@click="changeStatus($route.params.taskId, currentTask, 'done')"
+					@click="changeStatus(currentTask.id, currentTask, 'done')"
 			>Завершить</button>
       <button :disabled="currentTask.status === 'cancelled' || currentTask.status === 'done'" class="btn danger"
-							@click="changeStatus($route.params.taskId, currentTask, 'cancelled')"
+							@click="changeStatus(currentTask.id, currentTask, 'cancelled')"
 			>Отменить</button>
 			<button
 					style="margin-left: auto;"
 					v-if="currentTask.status === 'done' || currentTask.status === 'cancelled' "
 					class="btn danger"
-					@click="removeTask($route.params.taskId)"
+					@click="removeTask(currentTask.id)"
 			>Удалить</button>
 		</div>
 
@@ -43,6 +43,7 @@ export default {
 	mounted() {
 		this.loadTasks()
 	},
+
 	methods: {
 		...mapMutations(['del']),
 		...mapActions(['loadTasks']),
