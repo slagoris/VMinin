@@ -1,6 +1,8 @@
 {
   "dependencies": {
     "axios": "^0.26.1",
-    "vuex": "^4.0.2"
+    "vee-validate": "^4.5.11",
+    "vuex": "^4.0.2",
+    "yup": "^0.32.11"
   }
 }
