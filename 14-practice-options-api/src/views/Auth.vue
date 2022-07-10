@@ -1,30 +1,40 @@
 <template>
-		<form class="card" ref="authForm" @submit.prevent="onSubmit">
-			<h1>Войти в систему</h1>
+	<form class="card" ref="authForm" @submit.prevent="onSubmit" novalidate="true">
+		<h1>Войти в систему</h1>
 
-			<div :class="['form-control', {invalid: errors.email}]">
-				<label for="email">Email</label>
-				<input type="email" id="email" autocomplete="on" v-model="email">
-				<small v-if="errors.email">{{ errors.email }}</small>
-			</div>
+		<div :class="['form-control', {invalid: errors.email}]">
+			<label for="email">Email</label>
+			<input type="email" id="email" autocomplete="on" v-model="email" @blur="formIsValid">
+			<small v-if="errors.email">{{ errors.email }}</small>
+		</div>
 
-			<div :class="['form-control', {invalid: errors.password}]">
-				<label for="password">Пароль</label>
-				<input type="password" id="password" autocomplete="off" v-model="password">
-				<small v-if="errors.password">{{ errors.password }}</small>
-			</div>
-			<button
-					class="btn primary"
-					type="submit"
-			>Войти</button>
-			<div class="text-danger">Слишком частые попытки входа. Попробуйте позже.</div>
-		</form>
+		<div :class="['form-control', {invalid: errors.password}]">
+			<label for="password">Пароль</label>
+			<input type="password" id="password" autocomplete="off" v-model="password" @blur="formIsValid" @input="formIsValid">
+			<small v-if="errors.password">{{ errors.password }}</small>
+		</div>
+		<button
+				class="btn primary"
+				type="submit"
+		>Войти
+		</button>
+	</form>
 </template>
 
 <script>
 
+import {error} from "../utils/error";
+
 export default {
 	name: "Auth",
+	mounted() {
+		if(this.$route.query.message) {
+			this.$store.dispatch('setMessage', {
+				value: error(this.$route.query.message),
+				type: 'warning'
+			})
+		}
+	},
 	data() {
 		return {
 			email: '',
@@ -35,100 +45,52 @@ export default {
 			}
 		}
 	},
-	 methods: {
-		onSubmit() {
+	methods: {
+		validEmail(email) {
+			let re = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
+			return re.test(email);
+		},
+		formIsValid() {
+			let isValid = true
+			if (!this.email.length) {
+				this.errors.email = 'Email обязателен'
+				isValid = false
+			} else if (!this.validEmail(this.email)) {
+				this.errors.email = 'Введите корректный адрес электронной почты'
+				isValid = false
+			}
+			else {
+				this.errors.email = null
+			}
 
-		}
-	 }
+			if (!this.password.length) {
+				this.errors.password = 'Пароль обязателен'
+				isValid = false
+			} else if (this.password.length <= 5 && this.password.length > 0) {
+				this.errors.password = 'Пароль должен быть не меньше 6 символов'
+				isValid = false
+			} else {
+				this.errors.password = null
+			}
+			return isValid
+		},
+		async onSubmit() {
+
+			if (this.formIsValid()) {
+				try {
+					let formData = {}
+					formData.email = this.email
+					formData.password = this.password
+					console.log('Form: ' +  formData)
+					this.email = ''
+					this.password = ''
+
+					await  this.$store.dispatch('auth/login', formData)
+					await this.$router.push('/')
+				} catch (e) {
+				}
+			}
+		},
+	},
 }
 </script>
-
-<!--<template>-->
-<!--	<Form-->
-<!--			class="card"-->
-<!--			@submit="onSubmit"-->
-<!--			:validation-schema="schema"-->
-<!--			v-slot="{ isSubmitting, submitCount}"-->
-<!--			ref="myForm"-->
-<!--	>-->
-<!--		кол-во авторизаций {{ submitCount }}<br>-->
-<!--		<h1>Войти в систему</h1>-->
-<!--		<Field-->
-<!--				type="email"-->
-<!--				name="email"-->
-<!--				v-slot="{ field, errors, errorMessage }"-->
-<!--		>-->
-<!--			<div class="form-control" :class="{ invalid: errors.length }">-->
-<!--				<label for="email">Пароль</label>-->
-<!--				<input v-bind="field" id="email" type="text" autocomplete="on"/>-->
-<!--				<small v-if="errorMessage">{{ errorMessage }}</small>-->
-<!--			</div>-->
-<!--		</Field>-->
-
-<!--		<Field type="password" name="password" #="{ field, errors, errorMessage }">-->
-<!--			<div class="form-control" :class="{ invalid: errors.length}">-->
-<!--				<label for="password">Пароль</label>-->
-<!--				<input v-bind="field" id="password" type="password" autocomplete="off"/>-->
-<!--				<small v-if="errors">{{ errorMessage }}</small>-->
-<!--			</div>-->
-<!--		</Field>-->
-
-<!--		<button-->
-<!--				class="btn primary"-->
-<!--				type="submit"-->
-<!--				:disabled="isSubmitting || submitCount > 3"-->
-<!--		>Войти-->
-<!--		</button>-->
-<!--		<div v-if="submitCount > 3">Слишком много попыток входа. Попробуйте через 1 минуту</div>-->
-<!--	</Form>-->
-
-<!--</template>-->
-
-<!--<script>-->
-<!--import * as yup from 'yup';-->
-<!--import {Form, Field, ErrorMessage} from 'vee-validate'-->
-
-<!--export default {-->
-<!--	name: "Auth",-->
-<!--	components: {-->
-<!--		Form, Field, ErrorMessage-->
-<!--	},-->
-<!--	data() {-->
-<!--		// const { } = useSubmitCount()-->
-<!--		return {-->
-<!--			email: '',-->
-<!--			password: '',-->
-<!--			// count,-->
-<!--			schema: yup.object({-->
-<!--				email:-->
-<!--						yup-->
-<!--								.string()-->
-<!--								.trim()-->
-<!--								.required('E-mail обязателен')-->
-<!--								.email('Введите корректный e-mail'),-->
-
-<!--				password:-->
-<!--						yup-->
-<!--								.string()-->
-<!--								.trim()-->
-<!--								.required('Пароль обязателен')-->
-<!--								.min(8, 'Пароль не менее 8 символов')-->
-<!--			})-->
-<!--		}-->
-<!--	},-->
-<!--	computed: {-->
-
-<!--	},-->
-<!--	methods: {-->
-<!--		onSubmit(values) {-->
-<!--			console.log(values); // send data to API-->
-<!--			// reset the form and the field values to their initial values-->
-<!--			this.$refs.myForm.resetForm();-->
-<!--		},-->
-<!--	},-->
-<!--}-->
-<!--</script>-->
-
-<!--<style scoped>-->
-
-<!--</style>-->
